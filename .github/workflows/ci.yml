@@ -52,22 +52,13 @@ jobs:
             exit 1
           fi
 
-      - name: Validate the workflow files themselves
-        run: |
-          python3 -m pip install --quiet pyyaml
-          python3 - <<'PY'
-          import glob, sys, yaml
-          bad = 0
-          for path in sorted(glob.glob(".github/workflows/*.yml")):
-              with open(path, encoding="utf-8") as handle:
-                  try:
-                      yaml.safe_load(handle)
-                  except yaml.YAMLError as error:
-                      print(f"{path}: {error}")
-                      bad = 1
-          print("workflow files parse cleanly" if not bad else "workflow YAML is invalid")
-          sys.exit(bad)
-          PY
+      - name: Lint the workflow files with actionlint
+        # A workflow file GitHub rejects produces a run with zero jobs and no
+        # annotation, which is very hard to diagnose after the fact. actionlint
+        # catches it here instead. Pinned by digest-free tag for reproducibility.
+        uses: docker://rhysd/actionlint:1.7.12
+        with:
+          args: -color
 
       - name: Confirm no forbidden dependency is declared
         # Belt-and-braces alongside the checker's own rule: the project must stay
