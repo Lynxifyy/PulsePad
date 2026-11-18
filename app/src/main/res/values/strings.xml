@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PulsePad</string>
+
+    <string name="accessibility_service_label">PulsePad Controller Mapper</string>
+    <string name="accessibility_service_summary">Maps Bluetooth controller buttons to on-screen taps and swipes</string>
+    <string name="accessibility_service_description">PulsePad uses this service to read Bluetooth controller input and replay it as on-screen gestures. It does not read your screen content and never sends data off the device.</string>
+
+    <string name="nav_devices">Devices</string>
+    <string name="nav_studio">3D Studio</string>
+    <string name="nav_tuning">Tuning</string>
+    <string name="nav_profiles">Profiles</string>
+
+    <string name="capability_title">Device capabilities</string>
+    <string name="capability_subtitle">PulsePad adapts to what this device allows. Nothing here is fatal — each result changes how the app behaves.</string>
+    <string name="capability_refresh">Re-check</string>
+
+    <string name="capability_accessibility_name">Accessibility service</string>
+    <string name="capability_accessibility_ok">Enabled — system-wide mapping is available.</string>
+    <string name="capability_accessibility_off">Not enabled — mapping works only inside PulsePad.</string>
+    <string name="capability_accessibility_open_settings">Open accessibility settings</string>
+
+    <string name="capability_gles_name">OpenGL ES 3.0</string>
+    <string name="capability_gles_ok">Available — the 3D controller studio can render.</string>
+    <string name="capability_gles_missing">Unavailable — the studio falls back to a 2D schematic.</string>
+
+    <string name="capability_hid_host_name">Bluetooth HID host</string>
+    <string name="capability_hid_host_ok">Available — PulsePad can connect controllers directly.</string>
+    <string name="capability_hid_host_missing">Unavailable — PulsePad lists bonded controllers and detects their input instead.</string>
+
+    <string name="capability_play_services_name">Google Play Services</string>
+    <string name="capability_play_services_present">Present.</string>
+    <string name="capability_play_services_absent">Not present — PulsePad needs no Google services, so this changes nothing.</string>
+
+
+    <string name="notification_channel_capture_name">Controller connection</string>
+    <string name="notification_channel_capture_description">Shows which controller PulsePad is reading. Stays visible while a controller is connected.</string>
+    <string name="notification_channel_injection_name">Active mapping</string>
+    <string name="notification_channel_injection_description">Shows that PulsePad is replaying controller input as gestures. Stays visible while mapping is armed.</string>
+
+    <string name="notification_capture_title">PulsePad is reading a controller</string>
+    <string name="notification_capture_connected">Connected: %1$s</string>
+    <string name="notification_capture_idle">Waiting for a controller to connect</string>
+
+    <string name="notification_injection_title">PulsePad is active</string>
+    <string name="notification_injection_active">Replaying controller input as gestures in %1$s</string>
+    <string name="notification_injection_active_unknown">Replaying controller input as gestures</string>
+
+    <string name="input_debug_title">Input debug</string>
+    <string name="input_debug_subtitle">Phase 1 check: connect a controller and confirm every button and axis arrives as the expected value.</string>
+    <string name="input_debug_scan">Scan for controllers</string>
+    <string name="input_debug_scanning">Scanning...</string>
+    <string name="input_debug_no_devices_title">No controllers found</string>
+    <string name="input_debug_no_devices_body">Pair the controller in the Bluetooth settings on your device, then scan again. PulsePad lists any bonded controller, even on devices that do not expose the Bluetooth HID host profile.</string>
+    <string name="input_debug_connect">Connect</string>
+    <string name="input_debug_connected">Connected</string>
+    <string name="input_debug_not_connected">Not connected</string>
+    <string name="input_debug_hid_fallback_title">Direct Bluetooth connection is unavailable</string>
+    <string name="input_debug_hid_fallback_body">This device does not expose the Bluetooth HID host profile, so PulsePad cannot connect for you. Pair the controller in system settings instead; PulsePad will detect it as soon as the system sees it.</string>
+    <string name="input_debug_open_bluetooth_settings">Open Bluetooth settings</string>
+    <string name="input_debug_buttons_title">Buttons</string>
+    <string name="input_debug_axes_title">Sticks and triggers</string>
+    <string name="input_debug_no_input_yet">Press a button or move a stick to see values here.</string>
+    <string name="input_debug_last_event">Last event</string>
+    <string name="input_debug_source_hid_host">Bluetooth HID host</string>
+    <string name="input_debug_source_bonded">Bonded device</string>
+    <string name="input_debug_source_input_device">System input device</string>
+    <string name="input_debug_family_unknown">Unrecognised controller</string>
+    <string name="input_debug_family_dualshock4">PlayStation 4 (DualShock 4)</string>
+    <string name="input_debug_family_dualsense">PlayStation 5 (DualSense)</string>
+    <string name="input_debug_family_xbox">Xbox Wireless Controller</string>
+    <string name="input_debug_axis_value">%1$.2f</string>
+    <string name="input_debug_error_hid_unavailable">Pair the controller in system settings, then scan again.</string>
+    <string name="input_debug_error_permission">Bluetooth permission is required to list controllers.</string>
+    <string name="input_debug_error_system_rejected">The system rejected the connection request.</string>
+
+    <string name="devices_title">Devices</string>
+    <string name="devices_subtitle">Pair a controller in your device settings, then connect it here.</string>
+    <string name="devices_scan">Scan</string>
+    <string name="devices_scanning">Scanning</string>
+    <string name="devices_empty_title">No controllers paired yet</string>
+    <string name="devices_empty_body">Put the controller in pairing mode, pair it in your device Bluetooth settings, then tap Scan. PulsePad finds bonded controllers even on devices that hide the Bluetooth HID host profile.</string>
+    <string name="devices_empty_action">Open Bluetooth settings</string>
+    <string name="devices_connected">Connected</string>
+    <string name="devices_bonded">Paired</string>
+    <string name="devices_connect">Connect</string>
+    <string name="devices_disconnect">Disconnect</string>
+    <string name="devices_status_connecting">Connecting</string>
+    <string name="devices_input_debug">Input debug</string>
+    <string name="devices_section_available">Available controllers</string>
+
+    <string name="accessibility_banner_title">Accessibility service is off</string>
+    <string name="accessibility_banner_body">Mapping will not work outside PulsePad until the service is enabled.</string>
+    <string name="accessibility_banner_action">Enable</string>
+
+    <string name="studio_title">3D Studio</string>
+
+    <string name="tuning_title">Tuning</string>
+
+    <string name="profiles_title">Profiles</string>
+
+    <string name="common_back">Back</string>
+
+    <string name="button_cross">Cross</string>
+    <string name="button_circle">Circle</string>
+    <string name="button_square">Square</string>
+    <string name="button_triangle">Triangle</string>
+    <string name="button_a">A</string>
+    <string name="button_b">B</string>
+    <string name="button_x">X</string>
+    <string name="button_y">Y</string>
+    <string name="button_l1">L1</string>
+    <string name="button_r1">R1</string>
+    <string name="button_l2">L2</string>
+    <string name="button_r2">R2</string>
+    <string name="button_l3">L3</string>
+    <string name="button_r3">R3</string>
+    <string name="button_dpad_up">Up</string>
+    <string name="button_dpad_down">Down</string>
+    <string name="button_dpad_left">Left</string>
+    <string name="button_dpad_right">Right</string>
+    <string name="button_options">Options</string>
+    <string name="button_share">Share</string>
+    <string name="button_guide">Guide</string>
+
+    <string name="studio_selector_label">Controller model</string>
+    <string name="studio_model_dualshock4">PS4</string>
+    <string name="studio_model_dualsense">PS5</string>
+    <string name="studio_model_xbox">Xbox</string>
+    <string name="studio_loading_model">Loading controller model</string>
+    <string name="studio_schematic_notice">This device does not support OpenGL ES 3.0, so the 3D studio is showing a 2D schematic. Button mapping still works.</string>
+    <string name="studio_legend_title">Tap a control to map it</string>
+    <string name="studio_legend_body">Selecting a control opens its mapping options. Live highlighting follows the physical controller as you press buttons.</string>
+    <string name="studio_no_controller">No controller connected. Highlighting appears once one is paired.</string>
+
+    <string name="compat_unsupported_android_title">This Android version is not supported</string>
+    <string name="compat_unsupported_android_body">PulsePad requires Android 9 (API 28) or newer. This device runs an older version, so the app cannot read controller input here.</string>
+
+    <!-- Mapping editor -->
+    <string name="mapping_editor_title">Map %1$s</string>
+    <string name="mapping_action_label">Action</string>
+    <string name="mapping_action_disabled">Disabled</string>
+    <string name="mapping_action_tap">Tap</string>
+    <string name="mapping_action_hold">Hold</string>
+    <string name="mapping_action_swipe">Swipe</string>
+    <string name="mapping_action_macro">Macro</string>
+    <string name="mapping_action_turbo">Turbo</string>
+    <string name="mapping_position_hint">Drag the marker, or tap the pad below, to place the target.</string>
+    <string name="mapping_hold_duration_label">Hold duration</string>
+    <string name="mapping_hold_duration_value">%1$d ms</string>
+    <string name="mapping_turbo_rate_label">Turbo rate</string>
+    <string name="mapping_turbo_rate_value">%1$d Hz</string>
+    <string name="mapping_swipe_hint">Tap the pad to add points, in order.</string>
+    <string name="mapping_swipe_clear">Clear path</string>
+    <string name="mapping_swipe_duration_label">Swipe duration</string>
+    <string name="mapping_swipe_point_count">%1$d of %2$d points</string>
+    <string name="mapping_macro_hint">Each tap you add is replayed in order, with the delays you set between them.</string>
+    <string name="mapping_macro_add_tap">Add tap at marker</string>
+    <string name="mapping_macro_add_delay">Add delay</string>
+    <string name="mapping_macro_empty">No steps yet. Add a tap to start the sequence.</string>
+    <string name="mapping_macro_step_tap">Tap at %1$d%%, %2$d%%</string>
+    <string name="mapping_macro_step_delay">Wait %1$d ms</string>
+    <string name="mapping_macro_remove_step">Remove step %1$d</string>
+    <string name="mapping_save">Save mapping</string>
+    <string name="mapping_reset">Reset control</string>
+    <string name="mapping_preview_label">Target pad</string>
+    <string name="mapping_preview_help">The target pad is where gestures land. Coordinates are relative, so a profile works on any screen size.</string>
+
+    <!-- Stick and trigger tuning -->
+    <string name="stick_left">Left stick</string>
+    <string name="stick_right">Right stick</string>
+    <string name="stick_deadzone_label">Deadzone</string>
+    <string name="stick_deadzone_value">%1$d%%</string>
+    <string name="stick_curve_label">Response curve</string>
+    <string name="stick_curve_linear">Linear</string>
+    <string name="stick_curve_exponential">Exponential</string>
+    <string name="stick_curve_scurve">S-curve</string>
+    <string name="stick_exponent_label">Exponent</string>
+    <string name="stick_exponent_value">%1$.1f</string>
+    <string name="stick_sensitivity_label">Sensitivity</string>
+    <string name="stick_sensitivity_value">%1$.2f</string>
+    <string name="stick_graph_description">Response curve graph: input on the horizontal axis, output on the vertical axis.</string>
+    <string name="trigger_tuning_title">Trigger response</string>
+    <string name="trigger_threshold_label">Activation threshold</string>
+    <string name="trigger_threshold_value">%1$d%%</string>
+    <string name="trigger_max_value_label">Maximum output</string>
+    <string name="trigger_max_value_value">%1$d%%</string>
+
+    <!-- Tuning destination -->
+    <string name="tuning_injection_title">Injection interval</string>
+    <string name="tuning_injection_body">How often the engine batches and schedules gestures. A shorter interval reacts sooner and uses more CPU.</string>
+    <string name="tuning_injection_value">%1$d ms</string>
+    <string name="tuning_turbo_title">Turbo rate</string>
+    <string name="tuning_turbo_body">Taps per second while a turbo-mapped control is held.</string>
+    <string name="tuning_latency_title">Estimated latency</string>
+    <string name="tuning_latency_value">About %1$d ms end to end</string>
+    <string name="tuning_latency_disclaimer">Accessibility-only mode: expect roughly 50-120 ms depending on the device. This is not a virtual gamepad, and games that only accept gamepad input will not see these actions at all.</string>
+    <string name="tuning_engine_title">Injection engine</string>
+    <string name="tuning_arm_body">Mappings are replayed only while the engine is armed. Disarming stops every gesture immediately.</string>
+    <string name="tuning_armed_notice">Armed. Gestures are being injected into the foreground app.</string>
+    <string name="tuning_disarmed_notice">Disarmed. No gestures are being injected.</string>
+    <string name="tuning_unavailable_notice">Injection is unavailable because the accessibility service is not running.</string>
+    <string name="tuning_arm_failed">Injection could not be armed. Enable the accessibility service first.</string>
+    <string name="tuning_gesture_blocked_title">This app may be blocking accessibility gestures</string>
+    <string name="tuning_gesture_blocked_body">The system refused the last gesture. Try a different app, or use the in-app preview to confirm the mapping is correct.</string>
+    <string name="tuning_fireos_title">Accessibility is restricted on this Fire OS build</string>
+    <string name="tuning_fireos_body">This Fire OS version restricts third-party accessibility services. Mapping outside PulsePad is unavailable on this device. You can still use PulsePad as a 3D configuration preview.</string>
+    <string name="tuning_interval_warning">Intervals below 32 ms increase CPU use and battery drain, and rarely improve perceived latency.</string>
+
+    <!-- Profiles destination -->
+    <string name="profiles_empty_title">No saved profiles yet</string>
+    <string name="profiles_empty_body">Save the current mappings, stick curves and tuning as a named profile. Profiles are stored on this device and can be exported as JSON.</string>
+    <string name="profiles_save_action">Save current as profile</string>
+    <string name="profiles_name_dialog_title">Name this profile</string>
+    <string name="profiles_name_hint">Profile name</string>
+    <string name="profiles_save_confirm">Save</string>
+    <string name="profiles_cancel">Cancel</string>
+    <string name="profiles_summary_mappings">%1$d mapped controls</string>
+    <string name="profiles_summary_updated">Updated %1$s</string>
+    <string name="profiles_apply">Apply</string>
+    <string name="profiles_export">Export</string>
+    <string name="profiles_delete">Delete</string>
+    <string name="profiles_deleted">Profile deleted</string>
+    <string name="profiles_applied">Profile applied</string>
+    <string name="profiles_export_chooser">Share profile</string>
+    <string name="profiles_export_subject">PulsePad profile: %1$s</string>
+    <string name="profiles_import_action">Import from JSON</string>
+    <string name="profiles_import_dialog_title">Paste profile JSON</string>
+    <string name="profiles_import_hint">Paste the JSON exported from another device.</string>
+    <string name="profiles_import_confirm">Import</string>
+    <string name="profiles_import_invalid">That JSON is not a valid PulsePad profile.</string>
+    <string name="profiles_imported">Profile imported as %1$s</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Set up PulsePad</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_done">Finish</string>
+    <string name="onboarding_step_welcome_title">Controller remapping without root</string>
+    <string name="onboarding_step_welcome_body">PulsePad reads Bluetooth controllers and replays your mappings as touch gestures. Nothing is installed system-wide and no PC, ADB or root access is involved.</string>
+    <string name="onboarding_step_bluetooth_title">Connect a controller</string>
+    <string name="onboarding_step_bluetooth_body">Pair your PS4, PS5 or Xbox controller in the system Bluetooth settings, then return here. PulsePad needs permission to see and connect to it.</string>
+    <string name="onboarding_grant_bluetooth">Grant Bluetooth permission</string>
+    <string name="onboarding_bluetooth_granted">Bluetooth permission granted</string>
+    <string name="onboarding_step_accessibility_title">Enable the accessibility service</string>
+    <string name="onboarding_step_accessibility_body">Android only lets an app send touches to other apps through an accessibility service, and only you can enable it. Find PulsePad under Installed services and turn it on.</string>
+    <string name="onboarding_open_accessibility">Open accessibility settings</string>
+    <string name="onboarding_step_latency_title">About latency</string>
+    <string name="onboarding_step_latency_body">PulsePad replays gestures, so expect roughly 50-120 ms between a button press and the effect. Games that read gamepad input directly will not respond to these gestures at all.</string>
+    <string name="onboarding_step_rendering_title">Controller preview</string>
+    <string name="onboarding_step_rendering_body_3d">This device supports OpenGL ES 3.0, so the studio renders the controller models in 3D.</string>
+    <string name="onboarding_step_rendering_body_2d">This device does not support OpenGL ES 3.0, so the studio uses a 2D schematic. Mapping works exactly the same way.</string>
+    <string name="onboarding_step_hid_title">Bluetooth HID host</string>
+    <string name="onboarding_step_hid_body_available">This device exposes the Bluetooth HID host profile, so PulsePad can connect to controllers directly.</string>
+    <string name="onboarding_step_hid_body_unavailable">This device restricts the Bluetooth HID host profile. PulsePad will fall back to reading bonded controllers through the standard input system.</string>
+    <string name="onboarding_step_complete_title">You are ready</string>
+    <string name="onboarding_step_complete_body">Open the Devices tab to connect a controller, then map its controls in the 3D Studio. Arm injection from the Tuning tab when you want mappings to apply outside PulsePad.</string>
+
+    <!-- Edge cases -->
+    <string name="edge_controller_disconnected">Controller disconnected. Injection is paused.</string>
+    <string name="edge_service_killed">The accessibility service was stopped. Mappings will not apply until it is enabled again.</string>
+    <string name="edge_re_enable_action">Re-enable</string>
+    <string name="edge_dismiss">Dismiss</string>
+</resources>
