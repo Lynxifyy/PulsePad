@@ -115,6 +115,40 @@
     <string name="common_coming_soon">Coming soon</string>
     <string name="common_back">Back</string>
 
+    <string name="button_cross">Cross</string>
+    <string name="button_circle">Circle</string>
+    <string name="button_square">Square</string>
+    <string name="button_triangle">Triangle</string>
+    <string name="button_a">A</string>
+    <string name="button_b">B</string>
+    <string name="button_x">X</string>
+    <string name="button_y">Y</string>
+    <string name="button_l1">L1</string>
+    <string name="button_r1">R1</string>
+    <string name="button_l2">L2</string>
+    <string name="button_r2">R2</string>
+    <string name="button_l3">L3</string>
+    <string name="button_r3">R3</string>
+    <string name="button_dpad_up">Up</string>
+    <string name="button_dpad_down">Down</string>
+    <string name="button_dpad_left">Left</string>
+    <string name="button_dpad_right">Right</string>
+    <string name="button_options">Options</string>
+    <string name="button_share">Share</string>
+    <string name="button_guide">Guide</string>
+
+    <string name="studio_selector_label">Controller model</string>
+    <string name="studio_model_dualshock4">PS4</string>
+    <string name="studio_model_dualsense">PS5</string>
+    <string name="studio_model_xbox">Xbox</string>
+    <string name="studio_loading_model">Loading controller model</string>
+    <string name="studio_model_unavailable">This controller model could not be loaded. The 2D schematic is shown instead.</string>
+    <string name="studio_schematic_notice">This device does not support OpenGL ES 3.0, so the 3D studio is showing a 2D schematic. Button mapping still works.</string>
+    <string name="studio_legend_title">Tap a control to map it</string>
+    <string name="studio_legend_body">Selecting a control opens its mapping options. Live highlighting follows the physical controller as you press buttons.</string>
+    <string name="studio_no_controller">No controller connected. Highlighting appears once one is paired.</string>
+    <string name="studio_orbit_hint">Drag to orbit, pinch to zoom.</string>
+
     <string name="compat_notice_title">Compatibility notice</string>
     <string name="compat_unsupported_android_title">This Android version is not supported</string>
     <string name="compat_unsupported_android_body">PulsePad requires Android 9 (API 28) or newer. This device runs an older version, so the app cannot read controller input here.</string>

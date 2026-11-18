@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Gamepad
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.filled._3dRotation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +34,7 @@ import com.pulsepad.controller.presentation.ui.capability.CapabilityScreen
 import com.pulsepad.controller.presentation.ui.components.PlaceholderScreen
 import com.pulsepad.controller.presentation.ui.debug.InputDebugScreen
 import com.pulsepad.controller.presentation.ui.devices.DevicesScreen
+import com.pulsepad.controller.presentation.ui.studio.StudioScreen
 
 /**
  * Navigation shell: a bottom bar over the four top-level destinations, plus the
@@ -86,7 +86,7 @@ fun PulsePadNavHost(
                 )
             }
             composable(TopLevelDestination.STUDIO.route) {
-                StudioDestination()
+                StudioScreen(onMapButton = { /* mapping editor lands in Phase 4 */ })
             }
             composable(TopLevelDestination.TUNING.route) {
                 TuningDestination()
@@ -133,17 +133,6 @@ private fun PulsePadBottomBar(
                 )
             )
         }
-    }
-}
-
-@Composable
-private fun StudioDestination() {
-    DestinationScaffold(title = stringResource(R.string.studio_title)) {
-        PlaceholderScreen(
-            icon = Icons.Filled._3dRotation,
-            title = stringResource(R.string.studio_placeholder_title),
-            body = stringResource(R.string.studio_placeholder_body)
-        )
     }
 }
 
