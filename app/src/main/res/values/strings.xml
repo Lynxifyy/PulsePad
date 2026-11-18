@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PulsePad</string>
+
+    <string name="accessibility_service_label">PulsePad Controller Mapper</string>
+    <string name="accessibility_service_summary">Maps Bluetooth controller buttons to on-screen taps and swipes</string>
+    <string name="accessibility_service_description">PulsePad uses this service to read Bluetooth controller input and replay it as on-screen gestures. It does not read your screen content and never sends data off the device.</string>
+
+    <string name="nav_devices">Devices</string>
+    <string name="nav_studio">3D Studio</string>
+    <string name="nav_tuning">Tuning</string>
+    <string name="nav_profiles">Profiles</string>
+
+    <string name="capability_title">Device capabilities</string>
+    <string name="capability_subtitle">PulsePad adapts to what this device allows. Nothing here is fatal — each result changes how the app behaves.</string>
+    <string name="capability_refresh">Re-check</string>
+
+    <string name="capability_accessibility_name">Accessibility service</string>
+    <string name="capability_accessibility_ok">Enabled — system-wide mapping is available.</string>
+    <string name="capability_accessibility_off">Not enabled — mapping works only inside PulsePad.</string>
+    <string name="capability_accessibility_open_settings">Open accessibility settings</string>
+
+    <string name="capability_gles_name">OpenGL ES 3.0</string>
+    <string name="capability_gles_ok">Available — the 3D controller studio can render.</string>
+    <string name="capability_gles_missing">Unavailable — the studio falls back to a 2D schematic.</string>
+
+    <string name="capability_hid_host_name">Bluetooth HID host</string>
+    <string name="capability_hid_host_ok">Available — PulsePad can connect controllers directly.</string>
+    <string name="capability_hid_host_missing">Unavailable — PulsePad lists bonded controllers and detects their input instead.</string>
+
+    <string name="capability_play_services_name">Google Play Services</string>
+    <string name="capability_play_services_present">Present.</string>
+    <string name="capability_play_services_absent">Not present — PulsePad needs no Google services, so this changes nothing.</string>
+
+    <string name="capability_state_yes">Yes</string>
+    <string name="capability_state_no">No</string>
+
+    <string name="compat_notice_title">Compatibility notice</string>
+    <string name="compat_unsupported_android_title">This Android version is not supported</string>
+    <string name="compat_unsupported_android_body">PulsePad requires Android 9 (API 28) or newer. This device runs an older version, so the app cannot read controller input here.</string>
+</resources>
