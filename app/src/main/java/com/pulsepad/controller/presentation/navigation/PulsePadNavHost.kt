@@ -28,6 +28,7 @@ import com.pulsepad.controller.presentation.ui.devices.DevicesScreen
 import com.pulsepad.controller.presentation.ui.profiles.ProfilesScreen
 import com.pulsepad.controller.presentation.ui.studio.StudioScreen
 import com.pulsepad.controller.presentation.ui.tuning.TuningScreen
+import com.pulsepad.controller.presentation.ui.update.UpdateScreen
 
 /**
  * Navigation shell: a bottom bar over the four top-level destinations, plus the
@@ -38,6 +39,7 @@ import com.pulsepad.controller.presentation.ui.tuning.TuningScreen
  */
 private const val ROUTE_INPUT_DEBUG = "input_debug"
 private const val ROUTE_CAPABILITIES = "capabilities"
+private const val ROUTE_UPDATES = "updates"
 
 @Composable
 fun PulsePadNavHost(
@@ -46,7 +48,9 @@ fun PulsePadNavHost(
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    val showBottomBar = currentRoute != ROUTE_INPUT_DEBUG && currentRoute != ROUTE_CAPABILITIES
+    val showBottomBar = currentRoute != ROUTE_INPUT_DEBUG &&
+        currentRoute != ROUTE_CAPABILITIES &&
+        currentRoute != ROUTE_UPDATES
 
     Scaffold(
         modifier = modifier,
@@ -75,7 +79,8 @@ fun PulsePadNavHost(
             composable(TopLevelDestination.DEVICES.route) {
                 DevicesScreen(
                     onOpenInputDebug = { navController.navigate(ROUTE_INPUT_DEBUG) },
-                    onOpenCapabilities = { navController.navigate(ROUTE_CAPABILITIES) }
+                    onOpenCapabilities = { navController.navigate(ROUTE_CAPABILITIES) },
+                    onOpenUpdates = { navController.navigate(ROUTE_UPDATES) }
                 )
             }
             composable(TopLevelDestination.STUDIO.route) {
@@ -94,6 +99,11 @@ fun PulsePadNavHost(
             }
             composable(ROUTE_CAPABILITIES) {
                 CapabilityScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(ROUTE_UPDATES) {
+                UpdateScreen(
                     onBack = { navController.popBackStack() }
                 )
             }

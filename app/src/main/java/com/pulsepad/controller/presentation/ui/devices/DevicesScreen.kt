@@ -23,11 +23,15 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -74,6 +78,7 @@ import com.pulsepad.controller.presentation.viewmodel.InputDebugViewModel
 fun DevicesScreen(
     onOpenInputDebug: () -> Unit,
     onOpenCapabilities: () -> Unit,
+    onOpenUpdates: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InputDebugViewModel = hiltViewModel(),
     accessibilityViewModel: AccessibilityStatusViewModel = hiltViewModel()
@@ -113,6 +118,7 @@ fun DevicesScreen(
                             contentDescription = stringResource(R.string.capability_title)
                         )
                     }
+                    OverflowMenu(onOpenUpdates = onOpenUpdates)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -391,4 +397,39 @@ private fun ControllerFamily.labelRes(): Int = when (this) {
     ControllerFamily.DUALSENSE -> R.string.input_debug_family_dualsense
     ControllerFamily.XBOX_WIRELESS -> R.string.input_debug_family_xbox
     ControllerFamily.UNKNOWN -> R.string.input_debug_family_unknown
+}
+
+/**
+ * Overflow menu holding the actions that do not deserve their own button, such as
+ * the update check.
+ */
+@Composable
+private fun OverflowMenu(onOpenUpdates: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = stringResource(R.string.common_more_actions)
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.update_menu_action)) },
+                onClick = {
+                    expanded = false
+                    onOpenUpdates()
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.SystemUpdate,
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+    }
 }

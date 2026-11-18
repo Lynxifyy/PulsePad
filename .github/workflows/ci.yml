@@ -1,0 +1,82 @@
+name: Checks
+
+# The fast half of CI: every tracked file is inspected without needing a JDK or
+# the Android SDK, so a pull request gets a verdict in seconds. The full build in
+# build.yml runs the same integrity gate again and refuses to assemble an APK
+# while any error is outstanding.
+#
+# Run locally with:  python3 scripts/check_repo_integrity.py
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  every-file:
+    name: Inspect every tracked file
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: List the rules being enforced
+        run: python3 scripts/check_repo_integrity.py --list-rules
+
+      - name: Check every tracked file
+        run: python3 scripts/check_repo_integrity.py
+
+      - name: Fail if the tree has uncommitted changes
+        # A check that rewrites the tree (an autofix) would be misleading if its
+        # output were not committed; the checker must be read-only.
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "The integrity check modified the working tree:"
+            git status --porcelain
+            exit 1
+          fi
+
+      - name: Validate the workflow files themselves
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 - <<'PY'
+          import glob, sys, yaml
+          bad = 0
+          for path in sorted(glob.glob(".github/workflows/*.yml")):
+              with open(path, encoding="utf-8") as handle:
+                  try:
+                      yaml.safe_load(handle)
+                  except yaml.YAMLError as error:
+                      print(f"{path}: {error}")
+                      bad = 1
+          print("workflow files parse cleanly" if not bad else "workflow YAML is invalid")
+          sys.exit(bad)
+          PY
+
+      - name: Confirm no forbidden dependency is declared
+        # Belt-and-braces alongside the checker's own rule: the project must stay
+        # root-free and must not require Google Play Services.
+        run: |
+          set -eu
+          forbidden='com.google.android.gms|com.android.installreferrer|rikka.shizuku|dev.rikka|eu.chainfire|com.topjohnwu'
+          if grep -rInE "$forbidden" --include='*.kts' --include='*.toml' .; then
+            echo "A forbidden dependency is declared."
+            exit 1
+          fi
+          echo "No forbidden dependency declared."

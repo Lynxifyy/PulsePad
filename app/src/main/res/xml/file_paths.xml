@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Paths the update APK is shared from. Only the app's own external files
+  directory is exposed, and only the downloads folder inside it, so the file
+  provider cannot be used to read anything else on the device.
+-->
+<paths>
+    <external-files-path
+        name="updates"
+        path="Download/updates/" />
+</paths>
