@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,6 +38,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +49,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pulsepad.controller.R
 import com.pulsepad.controller.domain.model.ControllerButton
+import com.pulsepad.controller.presentation.ui.mapping.MappingEditorSheet
+import com.pulsepad.controller.presentation.ui.mapping.StickTuningSection
+import com.pulsepad.controller.presentation.ui.mapping.TriggerTuningSection
+import com.pulsepad.controller.presentation.viewmodel.MappingViewModel
 import com.pulsepad.controller.presentation.viewmodel.StudioModel
 import com.pulsepad.controller.presentation.viewmodel.StudioViewModel
 
@@ -56,17 +67,22 @@ import com.pulsepad.controller.presentation.viewmodel.StudioViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudioScreen(
-    onMapButton: (ControllerButton) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: StudioViewModel = hiltViewModel()
+    viewModel: StudioViewModel = hiltViewModel(),
+    mappingViewModel: MappingViewModel = hiltViewModel()
 ) {
     val selectedModel by viewModel.selectedModel.collectAsStateWithLifecycle()
     val capabilities by viewModel.capabilities.collectAsStateWithLifecycle()
     val controllerState by viewModel.controllerState.collectAsStateWithLifecycle()
+    val configuration by mappingViewModel.configuration.collectAsStateWithLifecycle()
+
+    var editingButton by remember { mutableStateOf<ControllerButton?>(null) }
+    val onMapButton: (ControllerButton) -> Unit = { editingButton = it }
 
     val pressed = controllerState.pressedButtons
     // Until the probe answers, assume the schematic: it is the safe default and
     // avoids briefly constructing a Filament engine on a device that cannot host one.
+    val unavailableModels by viewModel.unavailableModels.collectAsStateWithLifecycle()
     val canRender3d = capabilities?.openGlEs30Available == true
 
     Scaffold(
@@ -84,6 +100,7 @@ fun StudioScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -92,7 +109,7 @@ fun StudioScreen(
                 onSelect = viewModel::selectModel
             )
 
-            if (!canRender3d && capabilities != null) {
+            if ((!canRender3d || selectedModel in unavailableModels) && capabilities != null) {
                 SchematicNotice()
             }
 
@@ -110,17 +127,18 @@ fun StudioScreen(
                     animationSpec = tween(durationMillis = 320),
                     label = "modelSwap"
                 ) { model ->
-                    if (canRender3d) {
+                    if (canRender3d && model !in unavailableModels) {
                         ControllerSceneView(
                             assetName = assetNameFor(model),
                             pressedButtons = pressed,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            onModelUnavailable = { viewModel.markModelUnavailable(model) }
                         )
                     } else {
                         ControllerSchematicCanvas(
                             family = model.family,
                             pressedButtons = pressed,
-                            selectedButton = null,
+                            selectedButton = editingButton,
                             onButtonSelected = onMapButton,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -158,6 +176,67 @@ fun StudioScreen(
                     }
                 }
             }
+
+            StickTuningSection(
+                title = stringResource(R.string.stick_left),
+                config = configuration.leftStick,
+                onChange = mappingViewModel::setLeftStick
+            )
+
+            StickTuningSection(
+                title = stringResource(R.string.stick_right),
+                config = configuration.rightStick,
+                onChange = mappingViewModel::setRightStick
+            )
+
+            TriggerTuningSection(
+                config = configuration.trigger,
+                onChange = mappingViewModel::setTrigger
+            )
+
+            ActiveMappingSummary(
+                count = configuration.mappedCount,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+        }
+    }
+
+    editingButton?.let { button ->
+        MappingEditorSheet(
+            button = button,
+            family = selectedModel.family,
+            initialAction = configuration.actionFor(button),
+            onSave = { action ->
+                mappingViewModel.saveMapping(button, action)
+                editingButton = null
+            },
+            onDismiss = { editingButton = null }
+        )
+    }
+}
+
+@Composable
+private fun ActiveMappingSummary(count: Int, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Tune,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.profiles_summary_mappings, count),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

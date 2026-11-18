@@ -72,9 +72,29 @@ class StudioViewModel @Inject constructor(
         _selectedModel.value = model
     }
 
+    /**
+     * Remembers that a model could not be rendered on this device.
+     *
+     * A model that fails to load will fail again, so the studio stops asking
+     * Filament for it and shows the schematic instead of retrying on every
+     * recomposition.
+     */
+    fun markModelUnavailable(model: StudioModel) {
+        _unavailableModels.value = _unavailableModels.value + model
+    }
+
+    private val _unavailableModels = MutableStateFlow<Set<StudioModel>>(emptySet())
+
+    /** Models this device could not load, so the caller can fall back to the schematic. */
+    val unavailableModels: StateFlow<Set<StudioModel>> = _unavailableModels.asStateFlow()
+
     /** True when the device can render the 3D models; false means show the schematic. */
     val canRender3d: Boolean
         get() = _capabilities.value?.openGlEs30Available == true
+
+    /** Whether [model] should be drawn in 3D right now, on this device. */
+    fun canRenderIn3d(model: StudioModel): Boolean =
+        canRender3d && model !in _unavailableModels.value
 
     private fun familyToModel(family: ControllerFamily): StudioModel? = when (family) {
         ControllerFamily.DUALSHOCK_4 -> StudioModel.DUALSHOCK_4
