@@ -157,9 +157,98 @@ export ANDROID_HOME=/path/to/android-sdk
 ./gradlew :app:testDebugUnitTest      # unit tests
 ```
 
-Release builds are signed with the debug key so `assembleRelease` runs in CI
-without a keystore; a production build overrides `signingConfig` with a real
-configuration.
+Release builds use a stable signing key when one is supplied and fall back to the
+debug key otherwise, so `assembleRelease` runs anywhere without setup.
+
+### Release signing and versioning
+
+Two things matter for a build that users install and then update in place:
+
+* **The signing key must be stable.** An APK signed with a different key cannot
+  update an installed copy, so the release build reads its key from the
+  environment and falls back to the debug key only when none is supplied. In CI,
+  set the repository secrets `PULSEPAD_KEYSTORE_BASE64` (a base64 `.jks`) plus
+  `PULSEPAD_KEYSTORE_PASSWORD`, `PULSEPAD_KEY_ALIAS` and `PULSEPAD_KEY_PASSWORD`.
+  Without them, CI still builds and uploads APKs, but those APKs are signed with
+  an ephemeral key and cannot update one another.
+* **The version must match the tag.** A tagged build passes
+  `-PversionName` / `-PversionCode`, so the published APK reports the version its
+  tag names. The in-app updater compares its own `versionName` against the newest
+  release tag; if the two disagreed the app would offer an update that is really
+  itself.
+
+```bash
+PULSEPAD_KEYSTORE_PATH=/path/to/release.jks \
+PULSEPAD_KEYSTORE_PASSWORD=... \
+PULSEPAD_KEY_ALIAS=... \
+PULSEPAD_KEY_PASSWORD=... \
+./gradlew :app:assembleRelease -PversionName=1.2.0 -PversionCode=3
+```
+
+## Continuous integration
+
+Two workflows run on every push and pull request.
+
+`build.yml` produces the APKs. Its `integrity` job runs first and the `build` job
+`needs` it, so **the APK is not assembled while the repository integrity check
+reports an error** - the gate is real, not a parallel report. On a `v*` tag the
+release APK is attached to a GitHub release, which is what the in-app updater
+looks for.
+
+`ci.yml` is the fast half: it inspects every tracked file without a JDK or the
+Android SDK, so a pull request gets a verdict in seconds.
+
+### The repository integrity check
+
+`scripts/check_repo_integrity.py` scans **every tracked file** for the classes of
+defect a compiler and a linter do not catch:
+
+| Rule | Catches |
+|---|---|
+| `unfinished-work` | `TODO`, `FIXME`, `XXX`, `HACK`, `WIP` and similar markers left in source. |
+| `orphaned-source` | A class, object or top-level function nothing references - code that was written but never wired up. |
+| `unused-resource` / `undefined-resource` | Strings, colors and drawables that nothing points at, or references to resources that do not exist. |
+| `unwired-route` | A navigation destination that no screen can reach. |
+| `manifest-components` | A manifest entry whose class does not exist. |
+| `forbidden-dependency` | Shizuku, root helpers, Magisk, or Google Play Services creeping into a build file. |
+| `hardcoded-secret` | Tokens, private keys and credentials committed to the tree. |
+| `glyph-in-resources` | Emoji or pictographs in user-facing text, where a vector icon belongs. |
+| `aapt-unsafe-entity` | `&apos;`-style entities that AAPT2 rejects. |
+| `truncated-source`, `malformed-xml`, `malformed-python`, `malformed-asset` | Truncated or malformed files, including `.glb` headers. |
+| `empty-file` | A file committed with no content. |
+| `debug-leftover` | Debug-only code paths left reachable in a release build. |
+| `build-config` | Version and SDK configuration that has drifted out of range. |
+
+Run it locally with `python3 scripts/check_repo_integrity.py`; it exits non-zero
+on the first class of error. `--list-rules` prints every rule id, and `--json`
+emits machine-readable findings.
+
+A finding can be waived, but only with a reason, and only for one rule on one
+path: an inline `integrity:allow` comment on the line (or the line above), or an
+entry in `scripts/integrity-allowlist.txt`. A waiver that no longer matches
+anything is itself an error, so the allowlist cannot rot into a blanket.
+
+## Updates
+
+The overflow menu on the Devices screen opens an update screen. It reads the
+GitHub releases API, compares the newest release tag against the installed
+`versionName`, and - when a newer build exists and carries an `.apk` asset -
+downloads it with the system `DownloadManager` and hands it to the package
+installer. No browser round-trip is needed.
+
+The check is on demand, never automatic: the app is fully usable offline, and a
+background network call on every launch would be surprising. Details that the
+screen states plainly:
+
+* Installing requires the one-time "install unknown apps" permission, which
+  Android will not grant at runtime; the screen links straight to that setting.
+* The downloaded build must be signed with the same key as the installed app.
+  A build signed with a different key will be rejected by the installer.
+* Pre-releases are skipped unless the user opts in.
+
+The release APKs that `build.yml` publishes are signed with the debug key, so
+they are suitable for sideloading and for the updater. A store-distributed build
+would be signed with its own key and would update through the store instead.
 
 ## Permissions
 
@@ -168,6 +257,8 @@ configuration.
 | `BLUETOOTH_CONNECT`, `BLUETOOTH_SCAN` (API 31+); `BLUETOOTH`, `BLUETOOTH_ADMIN` (API 28-30) | See and connect to the controller. |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_CONNECTED_DEVICE` | Keep input capture alive while you are in another app. |
 | `POST_NOTIFICATIONS` | The ongoing notices for capture and for an armed engine. |
+| `INTERNET` | The update check. Read-only, unauthenticated, and optional. |
+| `REQUEST_INSTALL_PACKAGES` | Hand a downloaded update to the system installer. The user grants this in settings. |
 | `BIND_ACCESSIBILITY_SERVICE` (service-side) | The injection path. Only the user can grant this. |
 
 PulsePad cannot enable its own accessibility service. Onboarding and the Devices
@@ -179,13 +270,15 @@ banner deep-link to the system settings screen; the user toggles it.
 app/src/main/java/com/pulsepad/controller/
   data/bluetooth        discovery, HID host proxy, generic input fallback
   data/persistence      Room entities, DAO, database
-  data/repository       live configuration, saved profiles, input state
-  domain/model          controllers, inputs, mappings, capabilities
-  domain/engine         transform pipeline, gesture planner, profile codec
+  data/repository       live configuration, saved profiles, input state, updates
+  data/update           GitHub release client, APK download and install
+  domain/model          controllers, inputs, mappings, capabilities, versions
+  domain/engine         transform pipeline, gesture planner, profile codec, releases
   presentation          Compose UI, navigation, theme, view models
   service/accessibility capture + injection engine + arming coordinator
   service/input         foreground capture service, input device watcher
   util                  capability checks, logging, notifications, permissions
 app/src/main/assets/models   bundled controller models
-scripts/                     model generation and repository tooling
+scripts/                     model generation, repository tooling, integrity gate
+.github/workflows/           APK build (with the integrity gate) and fast checks
 ```

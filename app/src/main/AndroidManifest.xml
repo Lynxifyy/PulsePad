@@ -24,6 +24,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Update check against the GitHub releases API, and self-install of the
+         downloaded APK. Both are optional: the app is fully usable offline. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <!-- OpenGL ES 3.0 is required for the SceneView 3D Studio; a 2D fallback is
          provided at runtime when the device cannot provide it. -->
     <uses-feature
@@ -87,6 +92,18 @@
                 <action android:name="com.pulsepad.controller.action.RESTART_ACCESSIBILITY" />
             </intent-filter>
         </receiver>
+
+        <!-- Shares the downloaded update APK with the system package installer.
+             Only the app's private updates directory is exposed. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

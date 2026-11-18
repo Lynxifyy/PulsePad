@@ -100,6 +100,7 @@
     <string name="profiles_title">Profiles</string>
 
     <string name="common_back">Back</string>
+    <string name="common_more_actions">More actions</string>
 
     <string name="button_cross">Cross</string>
     <string name="button_circle">Circle</string>
@@ -261,4 +262,30 @@
     <string name="edge_service_killed">The accessibility service was stopped. Mappings will not apply until it is enabled again.</string>
     <string name="edge_re_enable_action">Re-enable</string>
     <string name="edge_dismiss">Dismiss</string>
+
+    <!-- Updates -->
+    <string name="update_menu_action">Check for updates</string>
+    <string name="update_title">Updates</string>
+    <string name="update_current_version">Installed version: %1$s</string>
+    <string name="update_check_action">Check for updates</string>
+    <string name="update_check_again_action">Check again</string>
+    <string name="update_checking">Checking GitHub for the newest release…</string>
+    <string name="update_up_to_date_title">You are up to date</string>
+    <string name="update_up_to_date_body">Version %1$s is the newest release.</string>
+    <string name="update_available_title">Version %1$s is available</string>
+    <string name="update_available_body">You have %1$s installed. PulsePad will download the new build and hand it to the system installer.</string>
+    <string name="update_download_size">Download size: %1$s</string>
+    <string name="update_install_action">Download and install</string>
+    <string name="update_downloading">Downloading the new version…</string>
+    <string name="update_installing_title">Finish the install</string>
+    <string name="update_installing_body">Android is showing its installer. Follow the prompt there to complete the update.</string>
+    <string name="update_failed_title">Update could not be completed</string>
+    <string name="update_failed_body">The check or the download did not finish. Check your connection and try again, or open the release page in a browser.</string>
+    <string name="update_permission_title">Allow installs from PulsePad</string>
+    <string name="update_permission_body">Android needs your permission before PulsePad can hand a downloaded update to the installer. This is a one-time setting.</string>
+    <string name="update_permission_action">Open install settings</string>
+    <string name="update_open_release_page">Open the release page</string>
+    <string name="update_release_notes_title">What is new</string>
+    <string name="update_prerelease_toggle">Include pre-releases</string>
+    <string name="update_same_signer_note">PulsePad only offers builds signed with the same key as the installed app. If the install is rejected, uninstall the current version first and install the new one from the release page.</string>
 </resources>

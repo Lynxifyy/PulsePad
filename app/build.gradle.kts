@@ -10,12 +10,42 @@ android {
     namespace = "com.pulsepad.controller"
     compileSdk = 37
 
+    // A tagged release build passes -PversionName / -PversionCode so the published
+    // APK reports the version its tag names. That matters for the in-app updater,
+    // which compares its own versionName against the newest release tag: if the
+    // two disagreed, the app would offer an update that is really itself.
+    val releaseVersionName = providers.gradleProperty("versionName").orNull ?: "1.0.0"
+    val releaseVersionCode = providers.gradleProperty("versionCode").orNull?.toIntOrNull() ?: 1
+
+    // A stable signing key, supplied by the environment so it never enters the
+    // repository. Without it the release build falls back to the debug key, which
+    // is fine for local testing but changes between machines - and an APK signed
+    // with a different key cannot update an installed copy.
+    val releaseKeystore = providers.environmentVariable("PULSEPAD_KEYSTORE_PATH").orNull
+    val releaseStorePassword = providers.environmentVariable("PULSEPAD_KEYSTORE_PASSWORD").orNull
+    val releaseKeyAlias = providers.environmentVariable("PULSEPAD_KEY_ALIAS").orNull
+    val releaseKeyPassword = providers.environmentVariable("PULSEPAD_KEY_PASSWORD").orNull
+    val hasReleaseKey = releaseKeystore != null && releaseStorePassword != null &&
+        releaseKeyAlias != null && releaseKeyPassword != null &&
+        file(releaseKeystore).isFile
+
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                storeFile = file(releaseKeystore!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "com.pulsepad.controller"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = releaseVersionCode
+        versionName = releaseVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -31,9 +61,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Debug signing keeps `assembleRelease` runnable in CI without a
-            // keystore; production builds override this with a real config.
-            signingConfig = signingConfigs.getByName("debug")
+            // Prefer the stable release key; fall back to the debug key so
+            // `assembleRelease` still runs locally without any setup.
+            signingConfig = if (hasReleaseKey) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 

@@ -2,6 +2,8 @@ package com.pulsepad.controller.di
 
 import android.content.Context
 import com.pulsepad.controller.data.bluetooth.InputDeviceScanner
+import com.pulsepad.controller.data.update.ApkInstaller
+import com.pulsepad.controller.data.update.GitHubReleaseClient
 import com.pulsepad.controller.util.CapabilityChecker
 import dagger.Module
 import dagger.Provides
@@ -40,4 +42,14 @@ object AppModule {
     @ApplicationScope
     fun provideApplicationScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    @Provides
+    @Singleton
+    fun provideGitHubReleaseClient(): GitHubReleaseClient = GitHubReleaseClient()
+
+    @Provides
+    @Singleton
+    fun provideApkInstaller(
+        @ApplicationContext context: Context
+    ): ApkInstaller = ApkInstaller(context)
 }

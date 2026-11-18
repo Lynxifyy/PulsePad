@@ -1,0 +1,10 @@
+# Waivers for the repository integrity check.
+#
+# Format:  <rule-id>:<path>[:<line>]  # reason
+#
+# Example:
+#   unfinished-work:app/src/main/java/com/pulsepad/controller/Foo.kt:42  # tracked in issue 17
+#
+# A waiver must carry a reason, and a waiver that no longer matches any finding is
+# itself an error, so this file cannot silently rot into a blanket. Prefer an
+# inline `integrity:allow` comment for a one-off waiver on a single line.
