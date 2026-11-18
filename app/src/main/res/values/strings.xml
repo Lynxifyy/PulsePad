@@ -80,6 +80,41 @@
     <string name="input_debug_analog_limited_title">Analog input needs Android 14 or newer</string>
     <string name="input_debug_analog_limited_body">Buttons work on every supported version. Stick and trigger values reach an accessibility service only from Android 14 (API 34), so on this device analog remapping is unavailable.</string>
 
+    <string name="devices_title">Devices</string>
+    <string name="devices_subtitle">Pair a controller in your device settings, then connect it here.</string>
+    <string name="devices_scan">Scan</string>
+    <string name="devices_scanning">Scanning</string>
+    <string name="devices_empty_title">No controllers paired yet</string>
+    <string name="devices_empty_body">Put the controller in pairing mode, pair it in your device Bluetooth settings, then tap Scan. PulsePad finds bonded controllers even on devices that hide the Bluetooth HID host profile.</string>
+    <string name="devices_empty_action">Open Bluetooth settings</string>
+    <string name="devices_connected">Connected</string>
+    <string name="devices_bonded">Paired</string>
+    <string name="devices_connect">Connect</string>
+    <string name="devices_disconnect">Disconnect</string>
+    <string name="devices_status_connecting">Connecting</string>
+    <string name="devices_input_debug">Input debug</string>
+    <string name="devices_section_available">Available controllers</string>
+    <string name="devices_family_label">%1$s</string>
+
+    <string name="accessibility_banner_title">Accessibility service is off</string>
+    <string name="accessibility_banner_body">Mapping will not work outside PulsePad until the service is enabled.</string>
+    <string name="accessibility_banner_action">Enable</string>
+
+    <string name="studio_title">3D Studio</string>
+    <string name="studio_placeholder_title">Controller studio</string>
+    <string name="studio_placeholder_body">The interactive controller model and mapping editor arrive in the next phase.</string>
+
+    <string name="tuning_title">Tuning</string>
+    <string name="tuning_placeholder_title">Injection tuning</string>
+    <string name="tuning_placeholder_body">Rate, turbo and latency controls arrive with the injection engine.</string>
+
+    <string name="profiles_title">Profiles</string>
+    <string name="profiles_placeholder_title">Profiles</string>
+    <string name="profiles_placeholder_body">Saving, exporting and importing controller profiles arrives with persistence.</string>
+
+    <string name="common_coming_soon">Coming soon</string>
+    <string name="common_back">Back</string>
+
     <string name="compat_notice_title">Compatibility notice</string>
     <string name="compat_unsupported_android_title">This Android version is not supported</string>
     <string name="compat_unsupported_android_body">PulsePad requires Android 9 (API 28) or newer. This device runs an older version, so the app cannot read controller input here.</string>

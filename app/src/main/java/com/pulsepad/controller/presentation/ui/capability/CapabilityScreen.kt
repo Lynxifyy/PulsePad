@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.CheckCircle
@@ -29,6 +30,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -61,6 +63,7 @@ import com.pulsepad.controller.service.accessibility.AccessibilitySettingsNaviga
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CapabilityScreen(
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CapabilityViewModel = hiltViewModel()
 ) {
@@ -71,6 +74,14 @@ fun CapabilityScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.capability_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.common_back)
+                        )
+                    }
+                },
                 actions = {
                     Icon(
                         imageVector = Icons.Filled.Memory,
