@@ -35,12 +35,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -76,9 +83,26 @@ fun DevicesScreen(
     val isScanning by viewModel.isScanning.collectAsStateWithLifecycle()
     val accessibilityEnabled by accessibilityViewModel.enabledInSettings
         .collectAsStateWithLifecycle()
+    val serviceKilled by accessibilityViewModel.serviceKilled.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val disconnectedMessage = stringResource(R.string.edge_controller_disconnected)
+
+    // A disconnect is reported once, on the transition into Disconnected. Watching
+    // the state itself would re-show the snackbar on every recomposition while the
+    // controller stays disconnected.
+    var wasConnected by remember { mutableStateOf(false) }
+    LaunchedEffect(connectionState) {
+        val connectedNow = connectionState is ControllerConnectionState.Connected
+        if (wasConnected && !connectedNow) {
+            snackbarHostState.showSnackbar(disconnectedMessage)
+        }
+        wasConnected = connectedNow
+    }
 
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.devices_title)) },
@@ -107,6 +131,13 @@ fun DevicesScreen(
                 item {
                     AccessibilityBanner(
                         onEnableClick = accessibilityViewModel::openAccessibilitySettings
+                    )
+                }
+            } else if (serviceKilled) {
+                item {
+                    ServiceKilledCard(
+                        onReEnable = accessibilityViewModel::openAccessibilitySettings,
+                        onDismiss = accessibilityViewModel::dismissServiceKilled
                     )
                 }
             }
@@ -168,6 +199,42 @@ fun DevicesScreen(
                     Icon(Icons.Filled.Memory, contentDescription = null)
                     Spacer(Modifier.width(12.dp))
                     Text(stringResource(R.string.devices_input_debug))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Shown when the OS stopped the accessibility service while PulsePad was running.
+ *
+ * It is dismissable, unlike the "never enabled" banner: the user has already been
+ * through the settings flow, so this is a nudge rather than an explanation.
+ */
+@Composable
+private fun ServiceKilledCard(onReEnable: () -> Unit, onDismiss: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.edge_service_killed),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = onReEnable) {
+                    Text(stringResource(R.string.edge_re_enable_action))
+                }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.edge_dismiss))
                 }
             }
         }

@@ -34,12 +34,39 @@ class AccessibilityStatusViewModel @Inject constructor(
     /** True when the user has granted the service in system settings. */
     val enabledInSettings: StateFlow<Boolean> = _enabledInSettings.asStateFlow()
 
+    /**
+     * True once the OS has stopped the service while the app was running.
+     *
+     * This is distinct from "never enabled": the user has already granted the
+     * service, so the right advice is to turn it back on, not to explain what it
+     * is. The flag clears as soon as the service reconnects.
+     */
+    private val _serviceKilled = MutableStateFlow(false)
+    val serviceKilled: StateFlow<Boolean> = _serviceKilled.asStateFlow()
+
     /** Live connection state of the running service process. */
     val connectionState: StateFlow<AccessibilityServiceBridge.ConnectionState> =
         AccessibilityServiceBridge.connectionState
 
     init {
         refresh()
+        viewModelScope.launch {
+            AccessibilityServiceBridge.connectionState.collect { state ->
+                when (state) {
+                    AccessibilityServiceBridge.ConnectionState.INTERRUPTED ->
+                        _serviceKilled.value = true
+
+                    AccessibilityServiceBridge.ConnectionState.CONNECTED ->
+                        _serviceKilled.value = false
+
+                    AccessibilityServiceBridge.ConnectionState.DISCONNECTED -> Unit
+                }
+            }
+        }
+    }
+
+    fun dismissServiceKilled() {
+        _serviceKilled.value = false
     }
 
     /**
