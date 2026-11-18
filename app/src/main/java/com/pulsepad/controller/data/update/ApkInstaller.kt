@@ -73,7 +73,7 @@ class ApkInstaller(private val context: Context) {
             .setDestinationInExternalFilesDir(
                 context,
                 Environment.DIRECTORY_DOWNLOADS,
-                apkFileName(update)
+                "$UPDATE_DIR/${apkFileName(update)}"
             )
 
         val downloadId = try {
@@ -156,7 +156,7 @@ class ApkInstaller(private val context: Context) {
     }
 
     private fun apkDirectory(): File =
-        File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "updates")
+        File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), UPDATE_DIR)
             .apply { mkdirs() }
 
     private fun apkFileName(update: AvailableUpdate): String =
@@ -168,5 +168,8 @@ class ApkInstaller(private val context: Context) {
         const val TAG = "ApkInstaller"
         const val APK_MIME_TYPE = "application/vnd.android.package-archive"
         const val DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000L
+
+        /** Must match the `path` in res/xml/file_paths.xml. */
+        const val UPDATE_DIR = "updates"
     }
 }

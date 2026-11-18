@@ -795,6 +795,106 @@ def rule_build_configuration(files: list[str]) -> list[Finding]:
 
 
 # --------------------------------------------------------------------------- #
+# FileProvider path drift
+# --------------------------------------------------------------------------- #
+
+FILE_PROVIDER_PATH_TAG = re.compile(
+    r'<(external-files-path|files-path|cache-path|external-cache-path|external-path)\b'
+    r'[^>]*?\bpath="([^"]*)"',
+    re.S,
+)
+CONST_STRING = re.compile(r'const val ([A-Za-z_]\w*)\s*=\s*"([^"]*)"')
+SET_DEST_EXTERNAL_FILES = re.compile(
+    r'setDestinationInExternalFilesDir\s*\((.*?)\)\s*$', re.S | re.MULTILINE
+)
+# The public constants the destination call takes, and the directory each names.
+ENVIRONMENT_DIRS = {
+    "DIRECTORY_DOWNLOADS": "Download",
+    "DIRECTORY_DOCUMENTS": "Documents",
+    "DIRECTORY_PICTURES": "Pictures",
+    "DIRECTORY_MOVIES": "Movies",
+    "DIRECTORY_MUSIC": "Music",
+}
+
+
+def _static_dir_prefix(expression: str, constants: dict[str, str]) -> str | None:
+    """The leading all-static directory components of a destination expression.
+
+    `"$UPDATE_DIR/${apkFileName(update)}"` yields `"updates"`: the first segment
+    resolves through a constant and scanning stops at the segment holding the call.
+    A bare call with no separator (`apkFileName(update)`) yields `""`, because the
+    file then lands directly in the environment directory. Returns None only when
+    the leading segment is unresolvable *and* more segments follow, so the true
+    path cannot be known.
+    """
+    segments = expression.strip().strip('"').split("/")
+    resolved = []
+    for index, raw in enumerate(segments):
+        token = raw.replace("${", "").replace("}", "").strip()
+        if token in constants:
+            resolved.append(constants[token])
+        elif re.fullmatch(r"[A-Za-z0-9_.-]+", token):
+            resolved.append(token)
+        else:
+            return "" if index == 0 and len(segments) == 1 else None
+    return "/".join(resolved)
+
+
+def rule_fileprovider_paths(files: list[str]) -> list[Finding]:
+    """A shared file must live under a path the file provider actually exposes.
+
+    A destination outside the declared provider path fails only at runtime, when
+    the user presses the button, as an IllegalArgumentException that is easy to
+    swallow. Cross-checking the two here turns that into a build failure.
+    """
+    findings = []
+    manifest = read_text(REPO_ROOT / "app/src/main/AndroidManifest.xml") or ""
+    if "androidx.core.content.FileProvider" not in manifest:
+        return findings
+
+    declared: list[tuple[str, str]] = []
+    for xml_file in sorted((REPO_ROOT / "app/src/main/res/xml").glob("*.xml")):
+        text = read_text(xml_file) or ""
+        for match in FILE_PROVIDER_PATH_TAG.finditer(text):
+            declared.append((str(xml_file.relative_to(REPO_ROOT)),
+                             match.group(2).strip("/")))
+    if not declared:
+        return findings
+
+    for rel in files:
+        if not rel.endswith(".kt"):
+            continue
+        text = read_text(REPO_ROOT / rel)
+        if text is None or "setDestinationInExternalFilesDir" not in text:
+            continue
+        constants = dict(CONST_STRING.findall(text))
+        for call in SET_DEST_EXTERNAL_FILES.finditer(text):
+            args = call.group(1)
+            parts = [p.strip() for p in args.split(",")]
+            if len(parts) < 3:
+                continue
+            dir_name = parts[-2].split(".")[-1]
+            directory = ENVIRONMENT_DIRS.get(dir_name)
+            if directory is None:
+                continue
+            prefix = _static_dir_prefix(parts[-1], constants)
+            if prefix is None:
+                continue
+            expected = f"{directory}/{prefix}".rstrip("/")
+            line = text[:call.start()].count("\n") + 1
+            if not any(declared_path == expected
+                       or expected.startswith(declared_path + "/")
+                       for _, declared_path in declared):
+                findings.append(Finding(
+                    "error", "fileprovider-path", rel, line,
+                    f"writes to '{expected}' but no file_paths.xml entry exposes it "
+                    f"(declared: {', '.join(sorted(p for _, p in declared))}); "
+                    "the file provider will reject the share at runtime",
+                ))
+    return findings
+
+
+# --------------------------------------------------------------------------- #
 # Allowlist
 # --------------------------------------------------------------------------- #
 
@@ -849,6 +949,7 @@ RULES = [
     rule_resource_wiring,
     rule_manifest_components,
     rule_navigation_wiring,
+    rule_fileprovider_paths,
     rule_orphaned_sources,
     rule_build_configuration,
 ]
