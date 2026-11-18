@@ -60,8 +60,8 @@ class PulsePadAccessibilityService : AccessibilityService() {
      * behaviour is preserved.
      */
     override fun onKeyEvent(event: KeyEvent): Boolean {
-        val input = ControllerKeyTranslator.translate(event) ?: return false
-        return ControllerInputRelay.dispatch(input, event)
+        val input = ControllerInputTranslator.translateKeyEvent(event) ?: return false
+        return ControllerInputRelay.dispatch(input)
     }
 
     /**
@@ -70,8 +70,8 @@ class PulsePadAccessibilityService : AccessibilityService() {
      * [com.pulsepad.controller.service.input.InputCaptureService].
      */
     override fun onMotionEvent(event: MotionEvent) {
-        for (input in ControllerMotionTranslator.translate(event)) {
-            ControllerInputRelay.dispatch(input, event)
+        for (input in ControllerInputTranslator.translateMotionEvent(event)) {
+            ControllerInputRelay.dispatch(input)
         }
     }
 

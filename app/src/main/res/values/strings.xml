@@ -35,6 +35,51 @@
     <string name="capability_state_yes">Yes</string>
     <string name="capability_state_no">No</string>
 
+    <string name="notification_channel_capture_name">Controller connection</string>
+    <string name="notification_channel_capture_description">Shows which controller PulsePad is reading. Stays visible while a controller is connected.</string>
+    <string name="notification_channel_injection_name">Active mapping</string>
+    <string name="notification_channel_injection_description">Shows that PulsePad is replaying controller input as gestures. Stays visible while mapping is armed.</string>
+
+    <string name="notification_capture_title">PulsePad is reading a controller</string>
+    <string name="notification_capture_connected">Connected: %1$s</string>
+    <string name="notification_capture_idle">Waiting for a controller to connect</string>
+
+    <string name="notification_injection_title">PulsePad is active</string>
+    <string name="notification_injection_active">Replaying controller input as gestures in %1$s</string>
+    <string name="notification_injection_active_unknown">Replaying controller input as gestures</string>
+
+    <string name="input_debug_title">Input debug</string>
+    <string name="input_debug_subtitle">Phase 1 check: connect a controller and confirm every button and axis arrives as the expected value.</string>
+    <string name="input_debug_scan">Scan for controllers</string>
+    <string name="input_debug_scanning">Scanning...</string>
+    <string name="input_debug_no_devices_title">No controllers found</string>
+    <string name="input_debug_no_devices_body">Pair the controller in the Bluetooth settings on your device, then scan again. PulsePad lists any bonded controller, even on devices that do not expose the Bluetooth HID host profile.</string>
+    <string name="input_debug_connect">Connect</string>
+    <string name="input_debug_connected">Connected</string>
+    <string name="input_debug_not_connected">Not connected</string>
+    <string name="input_debug_hid_fallback_title">Direct Bluetooth connection is unavailable</string>
+    <string name="input_debug_hid_fallback_body">This device does not expose the Bluetooth HID host profile, so PulsePad cannot connect for you. Pair the controller in system settings instead; PulsePad will detect it as soon as the system sees it.</string>
+    <string name="input_debug_open_bluetooth_settings">Open Bluetooth settings</string>
+    <string name="input_debug_buttons_title">Buttons</string>
+    <string name="input_debug_axes_title">Sticks and triggers</string>
+    <string name="input_debug_no_input_yet">Press a button or move a stick to see values here.</string>
+    <string name="input_debug_last_event">Last event</string>
+    <string name="input_debug_source_hid_host">Bluetooth HID host</string>
+    <string name="input_debug_source_bonded">Bonded device</string>
+    <string name="input_debug_source_input_device">System input device</string>
+    <string name="input_debug_family_unknown">Unrecognised controller</string>
+    <string name="input_debug_family_dualshock4">PlayStation 4 (DualShock 4)</string>
+    <string name="input_debug_family_dualsense">PlayStation 5 (DualSense)</string>
+    <string name="input_debug_family_xbox">Xbox Wireless Controller</string>
+    <string name="input_debug_pressed">Pressed</string>
+    <string name="input_debug_released">Released</string>
+    <string name="input_debug_axis_value">%1$.2f</string>
+    <string name="input_debug_error_hid_unavailable">Pair the controller in system settings, then scan again.</string>
+    <string name="input_debug_error_permission">Bluetooth permission is required to list controllers.</string>
+    <string name="input_debug_error_system_rejected">The system rejected the connection request.</string>
+    <string name="input_debug_analog_limited_title">Analog input needs Android 14 or newer</string>
+    <string name="input_debug_analog_limited_body">Buttons work on every supported version. Stick and trigger values reach an accessibility service only from Android 14 (API 34), so on this device analog remapping is unavailable.</string>
+
     <string name="compat_notice_title">Compatibility notice</string>
     <string name="compat_unsupported_android_title">This Android version is not supported</string>
     <string name="compat_unsupported_android_body">PulsePad requires Android 9 (API 28) or newer. This device runs an older version, so the app cannot read controller input here.</string>
