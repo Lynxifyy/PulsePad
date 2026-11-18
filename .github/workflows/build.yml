@@ -58,13 +58,17 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install required SDK platforms and build tools
+      - name: Install the Android SDK packages this project compiles against
+        # The runner already carries the SDK and sdkmanager, so only the missing
+        # packages are installed. Two details matter: `sdkmanager --licenses`
+        # prompts interactively and aborts a non-interactive job, hence the
+        # `yes |`; and the API 37 platform package is named `android-37.0`, not
+        # `android-37`. compileSdk 37 is required by SceneView 4.51.0 and
+        # Compose 1.12, so it cannot be lowered.
         run: |
-          sdkmanager --install "platforms;android-35" "platforms;android-36" \
-            "platforms;android-37" "build-tools;35.0.0"
+          SDKMANAGER="${ANDROID_HOME:-$ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" --install "platforms;android-37.0" "build-tools;37.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
